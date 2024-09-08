@@ -1,10 +1,18 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import User from './user.js';  // Ensure you add the correct extension
+import cors from 'cors';
+import User from './user.js';  // user scheema
+import Post from './post.js';   // post scheema
 
 const app = express();
 const PORT = 8000;
 
+
+app.use(cors({
+    origin: 'http://localhost:5173', // Replace with your client URL
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type']
+}));
 app.use(express.json());
 
 mongoose.connect("mongodb+srv://walidmoussa00:iOa416qkoPAUpCCE@cluster0.gaa1pcp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
@@ -15,35 +23,31 @@ mongoose.connect("mongodb+srv://walidmoussa00:iOa416qkoPAUpCCE@cluster0.gaa1pcp.
         console.log("Error with connecting to DB", error);
     });
 
-const users = [
-    { id: 1, username: "homos", password: "salsa" },
-    { id: 2, username: "ibrahim", password: "pizza" }
-];
-
-let posts = [
-    { id: 1, userID: 1, title: "My first express project", content: "Amazing project if you ask me ;)" },
-    { id: 2, userID: 1, title: "My first express project", content: "Amazing project if you ask me ;)" },
-    { id: 3, userID: 2, title: "for user 2", content: "testing" }
-];
-
 app.get('/', (req, res) => {
     res.send('HII, I MISSED YOU');
 });
 
-app.get('/users', (req, res) => {
-    res.send(users);
+app.get('/users', async  (req, res) => {
+    try {
+        const allUsers =  await User.find(); // Fetch all users from MongoDB
+        res.status(200).json(allUsers);
+    } catch (error) {
+        res.status(500).send("Error fetching users");
+    }
 });
 
 app.post('/register', async (req, res) => {
     const newUser = new User();
     const{username , password} = req.body;
-    newUser.id = 4;
     newUser.username = username;
     newUser.password = password;
-    await newUser.save();
     //const newUser = { id: users[users.length - 1].id + 1, ...req.body };
-    res.status(200);
-    res.json(newUser);
+    try {
+        await newUser.save();
+        res.status(200).json(newUser);
+    } catch (error) {
+        res.status(500).send("Error registering new user. Please try again later.");
+    }
 });
 
 app.post('/login', async (req, res) => {
@@ -61,29 +65,34 @@ app.post('/login', async (req, res) => {
     }
 });
 
-app.post('/publishPost', (req, res) => {
+app.post('/publishPost', async (req, res) => {
     const { userID, title, content } = req.body;
-    const newPostID = posts.length === 0 ? 1 : posts[posts.length - 1].id + 1;
     
-    const newPost = {
-        id: newPostID,
-        userID,
-        title,
-        content
-    };
+    const newPost = new Post({ userID, title, content });
     
-    posts.push(newPost);
-    res.status(201).send(posts);
+    try {
+        await newPost.save();
+        res.status(201).json(newPost); // 201 status for resource creation
+    } catch (error) {
+        res.status(500).send("Error publishing post, try again later.");
+    }
 });
 
-app.post('/viewPosts/:userID', (req, res) => {
+app.get('/viewPosts/:userID', async (req, res) => {
     const requestedUserID = req.params.userID;
-    const userPosts = posts.filter((temp) => requestedUserID == temp.userID);
-    if (userPosts.length === 0) {
-        res.status(404).send("No posts found for this user");
-    } else {
-        res.status(200).send(userPosts);
+    
+    try{
+        const userPosts = await Post.find({userID : requestedUserID});
+        if (userPosts.length === 0) {
+            res.status(404).send("No posts found for this user");
+        } else {
+            res.status(200).send(userPosts);
+        }
+    }catch(error){
+        res.status(500).send("Error fetching posts");
     }
+
+    
 });
 
 app.listen(PORT, () => {
