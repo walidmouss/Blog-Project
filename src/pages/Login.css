@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
+
+
+.login_page {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    min-height: 100vh; /* Full viewport height */
+    margin: 0; /* Remove default margin */
+    background-color: #bbbbff; /* Optional: background color for the page */
+  }
+.loginFormBox{
+    display: flex;
+    align-items: center;
+    background-color: rgb(229, 229, 252);
+    width: 850px;
+    height: 500px;
+    padding: 50px; /* Space inside the box */
+    border-radius: 20px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: shadow for the box */
+}
+.loginForm{
+  width: 300px;
+}
+.login_image{
+   width: 360px;
+    height: auto;
+    max-width: 100%;
+    margin-left: 70px;
+}
+.loginTitle{
+    font-family: 'Lato', sans-serif; /* Apply Lato font */
+    font-weight: 700;
+    font-size: 30px; /* Adjust size for headings */
+    margin-bottom: 30px;
+    margin-left: 20px;
+}

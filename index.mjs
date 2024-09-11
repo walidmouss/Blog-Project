@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import User from './user.js';  // user scheema
 import Post from './post.js';   // post scheema
+import { message } from 'antd';
 
 const app = express();
 const PORT = 8000;
@@ -57,7 +58,7 @@ app.post('/login', async (req, res) => {
         if (!findUser) {
             res.status(404).send("Invalid credentials, please try again!");
         } else {
-            res.status(200).send(`Welcome back Mr/Miss ${username}!`);
+            res.status(200).json(findUser);
         }
     }catch(error){
         res.status(500);
@@ -84,9 +85,9 @@ app.get('/viewPosts/:userID', async (req, res) => {
     try{
         const userPosts = await Post.find({userID : requestedUserID});
         if (userPosts.length === 0) {
-            res.status(404).send("No posts found for this user");
+            res.status(200).json({message:"No posts found for this user =("});
         } else {
-            res.status(200).send(userPosts);
+            res.status(200).json(userPosts);
         }
     }catch(error){
         res.status(500).send("Error fetching posts");
