@@ -9,7 +9,9 @@ function ViewPosts(){
     const[messages , setMessages] = useState("");
     const[posts , setPosts] = useState([]);
     const navigate = useNavigate();
-
+    const handleNewPost = () =>{
+        navigate(`/CreatePost/${userID}`)
+    }
     const handleLogout = ()=>{
         navigate('/');
     }
@@ -42,9 +44,11 @@ function ViewPosts(){
                 <div key={posts._id}>
                     <h2>{posts.title}</h2>
                     <p>{posts.content}</p>
+                    <Button>delete</Button>
                 </div>
             ))}
         <Button type="primary" onClick={handleLogout}>Logout</Button>
+        <Button type="primary" onClick={handleNewPost}>Publish</Button>
         </div>
     )
 }

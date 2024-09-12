@@ -79,6 +79,7 @@ app.post('/publishPost', async (req, res) => {
     }
 });
 
+
 app.get('/viewPosts/:userID', async (req, res) => {
     const requestedUserID = req.params.userID;
     
@@ -95,6 +96,9 @@ app.get('/viewPosts/:userID', async (req, res) => {
 
     
 });
+app.get('/deletePost' , async(req,res) =>{
+
+})
 
 app.listen(PORT, () => {
     console.log(`Running on Port ${PORT}`);
